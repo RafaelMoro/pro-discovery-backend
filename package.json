@@ -10,15 +10,18 @@
         "start": "env-cmd -f ./config/prod.env node server.js",
         "dev": "env-cmd -f ./config/dev.env nodemon server.js",
         "client1": "nodemon ./examples/example-client1.js",
-        "client2": "nodemon ./examples/example-client2.js"
+        "client2": "nodemon ./examples/example-client2.js",
+        "websocket": "nodemon ./examples/websocket-client.js",
+        "webrtc": "nodemon ./examples/web-rtc-client.js"
     },
     "dependencies": {
         "cors": "^2.8.5",
+        "env-cmd": "^10.1.0",
         "express": "^4.17.1",
         "sirv": "^1.0.5",
         "socket.io": "^4.0.1",
         "socket.io-client": "^4.0.1",
-        "env-cmd": "^10.1.0"
+        "ws": "^8.16.0"
     },
     "devDependencies": {
         "nodemon": "^2.0.4"
