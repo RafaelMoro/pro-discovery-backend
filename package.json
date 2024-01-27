@@ -9,6 +9,7 @@
     "scripts": {
         "start": "env-cmd -f ./config/prod.env node server.js",
         "dev": "env-cmd -f ./config/dev.env nodemon server.js",
+        "websocket-server": "nodemon websocket.server.js",
         "client1": "nodemon ./examples/example-client1.js",
         "client2": "nodemon ./examples/example-client2.js",
         "websocket": "nodemon ./examples/websocket-client.js",

@@ -8,7 +8,7 @@ const sirv = require("sirv");
 // ENVIRONMENT VARIABLES
 const PORT = process.env.PORT || 3030;
 const DEV = process.env.NODE_ENV === "development";
-const TOKEN = process.env.TOKEN;
+const TOKEN = process.env.TOKEN; 
 
 // SETUP SERVERS
 const app = express();
