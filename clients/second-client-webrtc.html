@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Client WebRTC</title>
+</head>
+<body>
+  <h1>Client 2 Web RTC</h1>
+  <button id="create-answer">Create Answer</button>
+  <button id="send-answer">Send back answer</button>
+  <button id="respond-peer">Respond client 1</button>
+</body>
+<script>
+  const uri = 'ws://localhost:3000'
+
+  const sendAnswerButton = document.getElementById('send-answer')
+  const createAnswerButton = document.getElementById('create-answer')
+  const respondButton = document.getElementById('respond-peer')
+  let connectedWebsocket = false;
+  let answer = null
+
+  const connectionWebSocket = new WebSocket(uri)
+
+  sendAnswerButton.addEventListener('click', () => {
+    if (connectedWebsocket) {
+      connectionWebSocket.send(answer)
+    }
+  })
+
+  respondButton.addEventListener('click', () => {
+    connectionWebRTC.myDataChannel.send('Hola desde cliente 2')
+  })
+
+  createAnswerButton.addEventListener('click', async () => {
+    await createNewAnswer()
+  })
+
+  /** Websocket */
+
+  connectionWebSocket.addEventListener('open', (event) => {
+    connectedWebsocket = true;
+    console.log('connected to websocket')
+  })
+
+  connectionWebSocket.addEventListener("message", async(event) => {
+    // Need to transform the string to a JSON
+    const offer = JSON.parse(event.data)
+    console.log('offer received', offer)
+
+    // Set Offer from remte
+    await setOfferFromRemote(offer)
+  })
+
+  /** Web RTC things  */
+  const configuration = {
+    iceServers: [
+      {
+        urls: ['stun:stun.l.google.com:19302','stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302']
+      }
+    ],
+  }
+  const connectionWebRTC = new RTCPeerConnection(configuration)
+
+  connectionWebRTC.onicecandidate = (event) => {
+    answer = JSON.stringify(connectionWebRTC.localDescription)
+    console.log(`
+    New user
+    Answer: ${answer}
+  `)
+  }
+
+  connectionWebRTC.ondatachannel = (event) => {
+    // Creating prop my data channel where I will save the data channel gotten from the initiator of the negotiation
+    connectionWebRTC.myDataChannel = event.channel
+    connectionWebRTC.myDataChannel.onmessage = (event) => {
+      console.log(`New message from client:
+      ${event.data}
+      `)
+    }
+
+    connectionWebRTC.myDataChannel.onopen = (event) => {
+      console.log('connection opened')
+    }
+  }
+
+  // First we set the offer
+  async function setOfferFromRemote(newOffer) {
+    // edit here and put the offer
+    try {
+      await connectionWebRTC.setRemoteDescription(newOffer)
+      console.log('offer set')
+    } catch (error) {
+      console.log('Error while setting remot description', error)
+    }
+  }
+
+  // Then we create an answer
+  async function createNewAnswer() {
+    try {
+      const newAnswer = await connectionWebRTC.createAnswer()
+      connectionWebRTC.setLocalDescription(newAnswer)
+      console.log('answer created')
+    } catch (error) {
+      console.warn('error creating new answer', error)
+    }
+  }
+</script>
+</html>

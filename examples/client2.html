@@ -12,25 +12,25 @@
   <p id="new-message"></p>
 </body>
 <script>
-  let connected = false;
+  let connectedWebsocket = false;
   const uri = 'ws://localhost:3000'
-  const connection = new WebSocket(uri)
+  const connectionWebSocket = new WebSocket(uri)
 
   const paragraph = document.getElementById('new-message')
   const buttonDom = document.getElementById('send-hello')
 
   buttonDom.addEventListener('click', () => {
-    if (connected) {
-      connection.send('Hola de vuelta')
+    if (connectedWebsocket) {
+      connectionWebSocket.send('Hola de vuelta')
     }
   })
 
-  connection.addEventListener('open', (event) => {
-    connected = true;
+  connectionWebSocket.addEventListener('open', (event) => {
+    connectedWebsocket = true;
     console.log('connected')
   })
 
-  connection.addEventListener("message", (event) => {
+  connectionWebSocket.addEventListener("message", (event) => {
     console.log('Message from server', event.data)
     paragraph.innerText = event.data
   })

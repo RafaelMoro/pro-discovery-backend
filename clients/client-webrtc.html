@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Client WebRTC</title>
+</head>
+<body>
+  <h1>Client 1 Web RTC</h1>
+  <button id="create-offer">Create offer</button>
+  <button id="send-offer">Send offer</button>
+  <button id="messageButton">Send message</button>
+</body>
+<script>
+  let connectedWebSocket = false;
+  const uri = 'ws://localhost:3000'
+  let offer = null;
+
+  const websocketConnection = new WebSocket(uri)
+  const sendOfferButton = document.getElementById('send-offer')
+  const createOfferButton = document.getElementById('create-offer')
+  const sendMessageButton = document.getElementById('messageButton')
+
+  const configuration = {
+    iceServers: [
+      {
+        urls: ['stun:stun.l.google.com:19302','stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302']
+      }
+    ],
+  }
+  const connectionWebRTC = new RTCPeerConnection(configuration)
+  const channel = connectionWebRTC.createDataChannel("my-channel")
+
+  sendOfferButton.addEventListener('click', () => {
+    if (connectedWebSocket) {
+      // Send offer
+      websocketConnection.send(offer)
+    }
+  })
+
+  sendMessageButton.addEventListener('click', () => {
+    channel.send('Hi from client 1')
+  })
+
+  createOfferButton.addEventListener('click', async () => {
+    await createOffer()
+  })
+
+  websocketConnection.addEventListener('open', (event) => {
+    connectedWebSocket = true;
+    console.log('connected to websocket')
+  })
+
+  websocketConnection.addEventListener("message", async (event) => {
+    const answer = JSON.parse(event.data)
+    console.log('answer', answer)
+    await setAnswer(answer)
+  })
+
+  channel.onmessage = (event) => {
+    console.log('Got a message', event.data)
+  }
+
+  channel.onopen = (event) = console.log('Connection opened')
+
+  connectionWebRTC.onicecandidate = (event) => {
+    offer = JSON.stringify(connectionWebRTC.localDescription)
+    console.log(`
+    New user
+    Offer: ${offer}
+  `)
+  }
+
+  async function createOffer() {
+    const offer = await connectionWebRTC.createOffer()
+    connectionWebRTC.setLocalDescription(offer)
+    console.log('offer set succesfully')
+  }
+
+  async function setAnswer(answer) {
+    await connectionWebRTC.setRemoteDescription(answer)
+  }
+</script>
+</html>
