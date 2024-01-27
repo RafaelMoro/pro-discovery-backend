@@ -6,17 +6,26 @@
   <title>Client 1</title>
 </head>
 <body>
-  <h1></h1>
+  <h1>Client 1</h1>
+  <div>
+    <button id="mybutton">Send hello</button>
+  </div>
 </body>
 <script>
+  let connected = false;
   const uri = 'ws://localhost:3000'
   const connection = new WebSocket(uri)
 
+  const domButton = document.getElementById('mybutton')
+  domButton.addEventListener('click', () => {
+    if (connected) {
+      connection.send('Hola')
+    }
+  })
+
   connection.addEventListener('open', (event) => {
-    setTimeout(() => {
-      console.log('aca')
-      connection.send('Hey')
-    }, 2000)
+    connected = true;
+    console.log('connected')
   })
 
   connection.addEventListener("message", (event) => {
