@@ -95,4 +95,4 @@ io.on("connection", (socket) => {
 app.use(sirv("public", { DEV }));
 
 // RUN APP
-server.listen(PORT, console.log(`Listening on PORT ${PORT}`));
+server.listen(PORT, console.log(`Listening on PORT ${PORT} socket io server`));
