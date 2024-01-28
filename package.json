@@ -7,7 +7,7 @@
     "author": "Mustafa Al-Janabi",
     "license": "MIT",
     "scripts": {
-        "start": "env-cmd -f .env node ./dist/index.js",
+        "start": "node ./dist/index.js",
         "build": "npx webpack",
         "start:server-socket": "env-cmd -f ./config/prod.env node server.js",
         "dev": "env-cmd -f ./config/dev.env nodemon server.js",
