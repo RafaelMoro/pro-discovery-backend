@@ -17,14 +17,14 @@ const server = http.createServer(app);
 const io = socketio(server, { cors: {} });
 
 // AUTHENTICATION MIDDLEWARE
-// io.use((socket, next) => {
-//     const token = socket.handshake.auth.token; // check the auth token provided by the client upon connection
-//     if (token === TOKEN) {
-//         next();
-//     } else {
-//         next(new Error("Authentication error"));
-//     }
-// });
+io.use((socket, next) => {
+    const token = socket.handshake.auth.token; // check the auth token provided by the client upon connection
+    if (token === TOKEN) {
+        next();
+    } else {
+        next(new Error("Authentication error"));
+    }
+});
 
 // API ENDPOINT TO DISPLAY THE CONNECTION TO THE SIGNALING SERVER
 let connections = {};
