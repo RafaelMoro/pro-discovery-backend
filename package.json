@@ -8,7 +8,7 @@
     "license": "MIT",
     "scripts": {
         "start": "env-cmd -f .env node ./dist/index.js",
-        "build": "webpack",
+        "build": "npx webpack",
         "start:server-socket": "env-cmd -f ./config/prod.env node server.js",
         "dev": "env-cmd -f ./config/dev.env nodemon server.js",
         "websocket-server": "env-cmd -f .env nodemon websocket.server.js",
